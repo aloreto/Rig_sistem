@@ -14,6 +14,8 @@
 
 class PositionFetcher(self):
 
+    def
+
     print 'these are the translations and rotations'
 
 
