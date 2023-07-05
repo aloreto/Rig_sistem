@@ -38,4 +38,7 @@ class Control():
     
     def add_adj_group(self):
         self.adj.append(cmds.group(self.name.replace('ctrl', 'adj'), em=True, parent=self.adj[-1]))
-        cmds.parent(self.ctrl, self.adj[-1]
+        cmds.parent(self.ctrl, self.adj[-1])
+
+
+        
