@@ -51,16 +51,15 @@ Like: attribute creation, control shape creation, etc....
 
  
 
-def integer_attributeCreator(Object, attributeName, maxValue=-10, minValue=10, defaultValue=0):  
+def integer_attributeCreator(Object, attributeName, maxValue=2, minValue=0, defaultValue=0):  
 
-    newAttribute = cmds.addAttr(Object, longName = attributeName,  attributeType = 'long', min = minValue,  max = maxValue,  defaultValue = defaultValue)
-    cmds.setAttr('{}.{}'.format(Object, attributeName), channelBox=true)
+    newAttribute = cmds.addAttr(Object, longName = attributeName,  attributeType = 'long', min = minValue,  max = maxValue,  defaultValue = defaultValue)    
+    cmds.setAttr('{}.{}'.format(Object, attributeName), channelBox=True)
     return newAttribute
 
    
             
-
-
+'''
 
 class ControlShape_creator():
 
@@ -110,7 +109,7 @@ class Attribute_locker():
             self.customAttributes = customAttributes
 
 
-
+'''
 
 
 
