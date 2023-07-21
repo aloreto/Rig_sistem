@@ -21,6 +21,13 @@ import re
 # methods included are: __delattr__, __getattribute__, __setattr__, etc...
 
 #-----------------------------------------
+# LIBRARY PATH VARIABLE
+#-----------------------------------------
+
+SHAPE_LIBRARY_PATH = "C:/PATH_TO_LIBRARY"
+
+
+#-----------------------------------------
 # UTILITIES
 #-----------------------------------------
 
@@ -81,34 +88,29 @@ def loadJasonData():
         cmds.error("The file" + path + "doesn't exists")
 
 
-def getKnotsData(curveShape = None):
-    
-    # Here, the Open Maya library will be used
-    # ".MObject" creates an instance of an object for us to use. To access any maya object you have to initialize it with this command
-    mObj = om.MObject()
+def getKnotsData(CurveShape=None):
     # "MCurveList" creates an empty list in open maya where we can add Maya Active objects to it    
     # This is so we can manipulate multiple data elements in one list
-    sel = MCurveList()
+    mObj = om.MObject()
+    sel = om.MSelectionList()
     # adding the curve passed to the function to the object list instance. This is the curve for which we want to get the vertices value to store the shape
-    sel.add(curveShape)
-    #"getDependNode" is a method of the "MCurveList" class. It finds the node under an object. Here we want the node with ID [0] (the shape)
+    sel.add(CurveShape)
+     #"getDependNode" is a method of the "MCurveList" class. It finds the node under an object. Here we want the node with ID [0] (the shape)
     # we are getting the element [0] from the instanced object "mObj", which is the curve nourb we passed to the function
     sel.getDependNode(0, mObj)
 
     # now here the code gets the data from that instanced object
     # to get the nurb information a new class will be used "MFnNurbsCurve"
     
-    nbsCurve = om.MFnNurbsCurve(mObj)
+    fnCurve = om.MFnNurbsCurve(mObj)
     # the function needed to get the knots of the curve needs to be set as an array type of output. Here we are setting that array
-    nbsKnots = om.MdoubleArray()
-    # now, we call the class method "getKnots" from the class "MFnNurbsCurve" to get the values
-    nbsCurve.getKnots(nbsKnots)
+    tmpKnots = om.MDoubleArray()
+     # now, we call the class method "getKnots" from the class "MFnNurbsCurve" to get the values
+    fnCurve.getKnots(tmpKnots)
 
     # finally, we loop through the list of knots stored int he nbs array (knots list) created before
     #[i] is the number of items or id length
-    return [nbsKnots[i]
-            # for each item in the index "i" return it.
-             for i in range(nbsKnots.length())]
+    return [tmpKnots[i] for i in range(tmpKnots.length())]             
 
 
 #-----------------------------------------
@@ -134,13 +136,13 @@ def validateCurve(Curve= None):
         # this error is the same as a print, except that shows as an error in the output 
         cmds.error('The object' + Curve + 'is not a valid curve')    
 
-    return curveShape    
+    return curveShape   
 
 
 def getCurveShape_data(Curve = None):
     # Returns a dictionary containing all the necessery information for rebuilding the curve passed to the function
     # callling the validator function to get the shape and check it's a nurbsCurve
-    curveShape = validateCurve(Curve)
+    curveShapes = validateCurve(Curve)
 
     # Declaring an empty list that will contain the dictionary of curve data per curveShape name
     CurveShapesList = []
@@ -160,9 +162,9 @@ def getCurveShape_data(Curve = None):
         points = []
 
         # looping on each controlPOint of the curve and getting the size array with positioning info
-        for i in range(cmds.getAttr(curveShape + 'controlPoints', size=True)):
+        for i in range(cmds.getAttr(curveShape + '.controlPoints', size=True)):
             # now we append that information to the dictionary key value set before as 'points'
-            points.append(cmds.getAttr(curveShape + '.controlPoints[{}]'.format(i)[0]))
+            points.append(cmds.getAttr(curveShape + '.controlPoints[%i]' % i)[0])
 
         # asigning the points values
         CurveShapeDict['points'] = points
